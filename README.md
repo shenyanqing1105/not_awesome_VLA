@@ -7,13 +7,13 @@ skill memory
 ## Summary
 RDT系列
 
-- RDT-1B
+⭐RDT-1B
 
   
-- RDT2
+⭐RDT2
 
-- **硬件革新**：对UMI（Unified Manipulation Interface）硬件进行了重新设计
-- **海量多样数据：**在100+室内场景中收集了超1万小时的人类操作视频，覆盖了抓取器能完成的绝大多数家用任务，数据采集成本仅为传统遥操作的1/10，速度提升5倍。
+- **硬件革新**：对UMI（Unified Manipulation Interface）硬件进行了重新设计 
+- **海量多样数据**：在100+室内场景中收集了超1万小时的人类操作视频，覆盖了抓取器能完成的绝大多数家用任务，数据采集成本仅为传统遥操作的1/10，速度提升5倍。 
 - 三阶段训练
   - **VLA预训练** RDT2-VQ：在Qwen2.5-VL-7B-Instruct模型上预训练了UMI数据集，以图像和语言作为输入，输出离散的动作标记（残差向量量化（RVQ））
   - **扩散：RDT2-FM**用一个**400M参数的RDT模型**（RDT-1B的改进版）替换RVQ，作为动作专家，attend到主干KV；冻结预训练的VLM主干，采用流匹配损失函数
@@ -21,42 +21,39 @@ RDT系列
 
 实验结果
 
-- 相变点**（**Phase Transition Point），展示了模型从训练中直接展现的鲁棒零样本泛化能力；【未知形态、未知场景、未知物体、未知语言】
+- 相变点（Phase Transition Point），展示了模型从训练中直接展现的鲁棒零样本泛化能力；【未知形态、未知场景、未知物体、未知语言】
 - 能力边界（Capability Boundary），通过六项挑战性下游任务评估RDT2-UltraFast的在分布内性能。
 
   
-- MemoryVLA: Perceptual-Cognitive Memory in Vision-Language-Action Models for Robotic Manipulation [[paper]](http://arxiv.org/abs/2508.19236)
-> introducing working memory and memory bank for long-horizon tasks [working memory includes perceptual tokens and cognitive tokens; bank corresponds to hippocampus, storing precise details and abstract semantics]
-> 
-> manipulation属于非马尔科夫过程，指当前状态的转移概率不仅依赖于当前状态，还依赖于之前的状态，具有记忆效应的随机过程；这里的记忆指的是同一episode内的记忆，训练时采用streaming queue作为dataloader;
->
-> retrieval是working memory（Q，dual）和bank中的两类token（KV）做的cross-attention的过程（并非单纯的“检索”）；gate fusion是通过learned gate把working memory和retrieved embeddings结合到一起，得到memory-augmented representations；memory consolation是当bank内memory长度超过L时做特征合并，将相邻两帧的memory-augmented representations做相似度比较，最高的一对将被合并为它们的均值。
-<img width="500" alt="image" src="https://github.com/user-attachments/assets/1e03f0ca-8b95-4996-be8d-62893ab0549d" />
+⭐ MemoryVLA: Perceptual-Cognitive Memory in Vision-Language-Action Models for Robotic Manipulation [[paper]](http://arxiv.org/abs/2508.19236)
+- introducing working memory and memory bank for long-horizon tasks [working memory includes perceptual tokens and cognitive tokens; bank corresponds to hippocampus, storing precise details and abstract semantics]
+- manipulation属于非马尔科夫过程，指当前状态的转移概率不仅依赖于当前状态，还依赖于之前的状态，具有记忆效应的随机过程；这里的记忆指的是同一episode内的记忆，训练时采用streaming queue作为dataloader;
+- retrieval是working memory（Q，dual）和bank中的两类token（KV）做的cross-attention的过程（并非单纯的“检索”）；gate fusion是通过learned gate把working memory和retrieved embeddings结合到一起，得到memory-augmented representations；memory consolation是当bank内memory长度超过L时做特征合并，将相邻两帧的memory-augmented representations做相似度比较，最高的一对将被合并为它们的均值。
+
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/1e03f0ca-8b95-4996-be8d-62893ab0549d" /-
 
 #### 世界模型相关
-- uniVLA
+⭐ uniVLA
 
 #### 推理链相关chain-of-thought
 cot-vla、embodied cot、tracevla【手工设计中间表示】
-- Chain-of-Action
-> compounding error复合误差
-> 
-> 动作建模：逆向地从“关键帧”动作开始，自回归生成动作轨迹；latent consistency；自回归如何连续动作？
-> 
-> reverse的优势：goal-conditioned（action、image），spatial continuity
->
-> 不足：训练过程中关键帧需要人工选择标记【decode出的第一个token就是下一个关键帧】
-> 
-> 未来：任务意图的嵌入构建，建立上层规划到动作生成的约束
+
+⭐ Chain-of-Action
+- compounding error复合误差
+- 动作建模：逆向地从“关键帧”动作开始，自回归生成动作轨迹；latent consistency；自回归如何连续动作？
+- reverse的优势：goal-conditioned（action、image），spatial continuity
+- 不足：训练过程中关键帧需要人工选择标记【decode出的第一个token就是下一个关键帧】
+- 未来：任务意图的嵌入构建，建立上层规划到动作生成的约束
 
 #### 其他
 
-- FiS-VLA, Fast-in-Slow
-> 把S1和S2的工作流统一在一个VLM中，即VLM完成了大脑（浅脑、深脑）：将S1的快速执行能力整合进一个预训练的VLM中，同时保留本身的S2推理能力
-> 具体来说，FiS-VLA将S2的最后几层的Transformer模块重新利用，并构建为一个高效执行的S1；充分利用VLM的推理能力，同时避免引入新的、未经过大规模预训练的S1
-> S1的输入依然是多模态的encoder结果
-> 双系统感知协同训练策略：扩散建模损失监督动作生成+自回归next-token预测生成离散动作或语言
-<img width="1002" height="423" alt="image" src="https://github.com/user-attachments/assets/2d045802-d782-46ee-aed1-47b70754b598" />
+⭐ FiS-VLA, Fast-in-Slow
+- 把S1和S2的工作流统一在一个VLM中，即VLM完成了大脑（浅脑、深脑）：将S1的快速执行能力整合进一个预训练的VLM中，同时保留本身的S2推理能力
+- 具体来说，FiS-VLA将S2的最后几层的Transformer模块重新利用，并构建为一个高效执行的S1；充分利用VLM的推理能力，同时避免引入新的、未经过大规模预训练的S1
+- S1的输入依然是多模态的encoder结果
+- 双系统感知协同训练策略：扩散建模损失监督动作生成+自回归next-token预测生成离散动作或语言
+
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/2d045802-d782-46ee-aed1-47b70754b598" /-
 
 ## 积累
 关于机器人的研究，已经从“本体的运动机能”转向了“智能体的感知决策”。
