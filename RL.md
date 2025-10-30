@@ -1,3 +1,5 @@
+> CS234课程，MDP、DPO、PPO的概念和定义，交大的动手学RL，sutton的RL书
+
 ## 马尔可夫决策过程（Markov decision process，MDP）
 
 ### 状态转移矩阵
