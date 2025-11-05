@@ -30,13 +30,13 @@ RDT系列
 - manipulation属于非马尔科夫过程，指当前状态的转移概率不仅依赖于当前状态，还依赖于之前的状态，具有记忆效应的随机过程；这里的记忆指的是同一episode内的记忆，训练时采用streaming queue作为dataloader;
 - retrieval是working memory（Q，dual）和bank中的两类token（KV）做的cross-attention的过程（并非单纯的“检索”）；gate fusion是通过learned gate把working memory和retrieved embeddings结合到一起，得到memory-augmented representations；memory consolation是当bank内memory长度超过L时做特征合并，将相邻两帧的memory-augmented representations做相似度比较，最高的一对将被合并为它们的均值。
 
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/1e03f0ca-8b95-4996-be8d-62893ab0549d" /-
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/1e03f0ca-8b95-4996-be8d-62893ab0549d" />
 
 #### 世界模型相关
 ⭐ uniVLA
 
 #### 推理链相关chain-of-thought
-cot-vla、embodied cot、tracevla【手工设计中间表示】
+embodied cot、tracevla【手工设计中间表示】
 
 ⭐ Chain-of-Action
 - compounding error复合误差
@@ -44,6 +44,13 @@ cot-vla、embodied cot、tracevla【手工设计中间表示】
 - reverse的优势：goal-conditioned（action、image），spatial continuity
 - 不足：训练过程中关键帧需要人工选择标记【decode出的第一个token就是下一个关键帧】
 - 未来：任务意图的嵌入构建，建立上层规划到动作生成的约束
+
+⭐ COT-VLA
+- To incorporate explicit visual reasoning before action generation, perform visual chain-of-thought reasoning through subgoal image generation as an intermediate reasoning step.
+- The overall training objective combines the action and visual losses: visual tokens prediction and action tokens prediction.
+- base model: VILA-U; auto-regressive paradigm; hybrid attention: causal attention and full attention
+- pretrain CoT-VLA on both robot demonstrations and <u>action-less videos (only for visual pretraining)</u>
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/b6ed247f-9a59-4b1b-881d-ae7b7174f692" />
 
 #### 其他
 
@@ -53,7 +60,7 @@ cot-vla、embodied cot、tracevla【手工设计中间表示】
 - S1的输入依然是多模态的encoder结果
 - 双系统感知协同训练策略：扩散建模损失监督动作生成+自回归next-token预测生成离散动作或语言
 
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/2d045802-d782-46ee-aed1-47b70754b598" /-
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/2d045802-d782-46ee-aed1-47b70754b598" />
 
 ## 积累
 关于机器人的研究，已经从“本体的运动机能”转向了“智能体的感知决策”。
